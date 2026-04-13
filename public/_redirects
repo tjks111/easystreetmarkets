@@ -1,6 +1,3 @@
-# www to bare domain
-https://www.easystreetmarkets.com/* https://easystreetmarkets.com/:splat 301!
-
-# Old URL patterns (preserve 23 years of authority)
-/index.cgi?LI=For+Sale / 301
-/index.cgi* / 301
+# Old URL patterns (preserve 23 years of authority) — relative URLs only for Workers
+/index.cgi /  301
+/ez/* / 301

@@ -1,9 +1,0 @@
-name = "easystreetmarkets"
-pages_build_output_dir = ".open-next"
-compatibility_date = "2024-09-23"
-compatibility_flags = ["nodejs_compat"]
-
-[vars]
-NEXT_PUBLIC_SITE_URL = "https://easystreetmarkets.com"
-NEXT_PUBLIC_SUPABASE_URL = "https://ykpgulbugkxiqldvgsjs.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlrcGd1bGJ1Z2t4aXFsZHZnc2pzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwNjg3MzYsImV4cCI6MjA5MTY0NDczNn0.LXfF2HMU6UFQnQtxcVe7vx27exaqWP82exLFb91Getc"
