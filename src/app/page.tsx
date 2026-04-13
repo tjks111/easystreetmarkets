@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCategories, getProducts, getCollections, getAnimals } from "@/lib/data";
+import { getCategories, getProducts, getCollections, getAnimals, getBlogPosts } from "@/lib/data";
 import ProductGrid from "@/components/ProductGrid";
 import AnimalCard from "@/components/AnimalCard";
 import { SITE_NAME, CATEGORY_LABELS } from "@/lib/utils";
@@ -7,11 +7,12 @@ import { SITE_NAME, CATEGORY_LABELS } from "@/lib/utils";
 export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [categories, featuredProducts, collections, animals] = await Promise.all([
+  const [categories, featuredProducts, collections, animals, blogPosts] = await Promise.all([
     getCategories(),
     getProducts({ limit: 8 }),
     getCollections(),
     getAnimals(),
+    getBlogPosts(),
   ]);
 
   const tier1Slugs = ["elephant", "wolf", "bear", "bald-eagle", "tiger", "deer", "owl", "sea-turtle", "dolphin", "monarch-butterfly"];
@@ -86,6 +87,31 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Blog */}
+      {blogPosts.length > 0 && (
+        <section className="max-w-7xl mx-auto py-16 px-4">
+          <h2 className="text-3xl font-bold mb-2 text-center">From the Blog</h2>
+          <p className="text-center text-foreground/70 mb-8">
+            Honest writing about wildlife merchandise, the markets that make it, and the buyers they fail.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {blogPosts.slice(0, 3).map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}/`}
+                className="bg-white rounded-lg border border-forest/10 hover:border-forest/40 hover:shadow-lg transition-all p-6"
+              >
+                <h3 className="font-bold text-lg text-forest mb-3 leading-snug">{post.title}</h3>
+                {post.excerpt && (
+                  <p className="text-sm text-foreground/70 line-clamp-4">{post.excerpt}</p>
+                )}
+                <div className="mt-4 text-sm text-forest font-medium">Read →</div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Collections */}
       <section className="max-w-7xl mx-auto py-16 px-4">

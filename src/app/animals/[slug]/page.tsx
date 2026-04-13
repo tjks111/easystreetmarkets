@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 import { getAnimal, getAnimals, getProducts, getCategoriesForAnimal } from "@/lib/data";
 import ProductGrid from "@/components/ProductGrid";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { CATEGORY_LABELS, SITE_URL } from "@/lib/utils";
+import { CATEGORY_LABELS, SITE_URL, SITE_NAME } from "@/lib/utils";
+import { graph, breadcrumbSchema, ORG_ID, PERSON_ID } from "@/lib/schema";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -136,21 +137,34 @@ export default async function AnimalDetailPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Article",
-              headline: animal.common_name,
-              alternateName: animal.scientific_name,
-              description: animal.description?.split("\n\n")[0],
-              about: {
-                "@type": "Thing",
-                name: animal.common_name,
-                alternateName: animal.scientific_name,
-              },
-              author: { "@id": `${SITE_URL}/about/tim/#person` },
-              publisher: { "@id": `${SITE_URL}/#organization` },
-              mainEntityOfPage: `${SITE_URL}/animals/${slug}/`,
-            }),
+            __html: JSON.stringify(
+              graph([
+                {
+                  "@type": "Article",
+                  headline: animal.common_name,
+                  alternateName: animal.scientific_name,
+                  description: animal.description?.split("\n\n")[0],
+                  author: { "@id": PERSON_ID },
+                  publisher: { "@id": ORG_ID },
+                  mainEntityOfPage: `${SITE_URL}/animals/${slug}/`,
+                  about: {
+                    "@type": "Thing",
+                    name: animal.common_name,
+                    alternateName: animal.scientific_name,
+                    sameAs: [
+                      `https://en.wikipedia.org/wiki/${encodeURIComponent(
+                        (animal.scientific_name || animal.common_name).replace(/ /g, "_")
+                      )}`,
+                    ],
+                  },
+                },
+                breadcrumbSchema([
+                  { name: SITE_NAME, url: SITE_URL },
+                  { name: "Animals", url: `${SITE_URL}/animals/` },
+                  { name: animal.common_name, url: `${SITE_URL}/animals/${slug}/` },
+                ]),
+              ])
+            ),
           }}
         />
       </article>

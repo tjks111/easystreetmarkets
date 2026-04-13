@@ -9,7 +9,8 @@ import {
 } from "@/lib/data";
 import ProductGrid from "@/components/ProductGrid";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { CATEGORIES, CATEGORY_LABELS, SITE_URL, capitalize } from "@/lib/utils";
+import { CATEGORIES, CATEGORY_LABELS, SITE_URL, SITE_NAME, capitalize } from "@/lib/utils";
+import { graph, breadcrumbSchema, ORG_ID } from "@/lib/schema";
 
 export const revalidate = 3600;
 
@@ -133,14 +134,52 @@ export default async function CategoryPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: `Best Wildlife ${label}`,
-            description: cat.meta_description,
-            url: `${SITE_URL}/${category}/`,
-            publisher: { "@id": `${SITE_URL}/#organization` },
-          }),
+          __html: JSON.stringify(
+            graph([
+              {
+                "@type": "CollectionPage",
+                "@id": `${SITE_URL}/${category}/#collectionpage`,
+                name: `Best Wildlife ${label}`,
+                description: cat.meta_description,
+                url: `${SITE_URL}/${category}/`,
+                isPartOf: { "@id": `${SITE_URL}/#website` },
+                publisher: { "@id": ORG_ID },
+              },
+              breadcrumbSchema([
+                { name: SITE_NAME, url: SITE_URL },
+                { name: label, url: `${SITE_URL}/${category}/` },
+              ]),
+              {
+                "@type": "FAQPage",
+                mainEntity: [
+                  {
+                    "@type": "Question",
+                    name: `What are the best wildlife ${label.toLowerCase()} for nature lovers?`,
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: `We curate ${label.toLowerCase()} across animal, art style, and price so you can match the gift to the person. Popular picks are elephants, wolves, bears, and sea turtles.`,
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: `Where are these ${label.toLowerCase()} from?`,
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "We compare across Amazon, Redbubble, Etsy, and independent wildlife brands. Every product links directly to the seller.",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "Do you earn a commission?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "Yes, when you buy through our affiliate links. No vendor pays for placement.",
+                    },
+                  },
+                ],
+              },
+            ])
+          ),
         }}
       />
     </div>
