@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/utils";
 import { graph, organizationSchema, websiteSchema } from "@/lib/schema";
+
+const GA_ID = "G-Z75TJXZVK3";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +50,18 @@ export default function RootLayout({
             __html: JSON.stringify(graph([organizationSchema(), websiteSchema()])),
           }}
         />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
