@@ -21,19 +21,29 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
   const { category } = await params;
+  const resolvedSearchParams = await searchParams;
+  const pageParam = resolvedSearchParams.page;
+  const page = typeof pageParam === "string" ? parseInt(pageParam, 10) : 1;
+
   const cat = await getCategory(category);
   if (!cat) return {};
   const label = CATEGORY_LABELS[category] || cat.name;
+  
+  const canonicalUrl = page > 1 ? `${SITE_URL}/${category}/?page=${page}` : `${SITE_URL}/${category}/`;
+  const titleSuffix = page > 1 ? ` (Page ${page})` : '';
+
   return {
-    title: `Best Wildlife ${label} — Curated & Compared`,
+    title: `Best Wildlife ${label} — Curated & Compared${titleSuffix}`,
     description:
       cat.meta_description ||
       `Compare the best wildlife ${label.toLowerCase()} from Amazon, Redbubble, Etsy, and independent brands.`,
-    alternates: { canonical: `${SITE_URL}/${category}/` },
+    alternates: { canonical: canonicalUrl },
   };
 }
 
