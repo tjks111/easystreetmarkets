@@ -63,15 +63,9 @@ export async function getProducts(filters?: {
       .select(PRODUCT_LIST_FIELDS)
       .eq("in_stock", true);
 
-    if (filters?.category) {
-      q = q.eq("category", filters.category);
-    }
-    if (filters?.animal) {
-      q = q.eq("animal", filters.animal);
-    }
-    if (filters?.featured !== undefined) {
-      q = q.eq("is_featured", filters.featured);
-    }
+    if (filters?.category) q = q.eq("category", filters.category);
+    if (filters?.animal) q = q.eq("animal", filters.animal);
+    if (filters?.featured) q = q.eq("is_featured", true);
 
     return q
       .order("is_featured", { ascending: false, nullsFirst: false })
@@ -80,41 +74,57 @@ export async function getProducts(filters?: {
 
   // 1. Fetch priority products (Amazon/eBay) first
   let priorityQuery = buildBaseQuery().in("source", PRIORITY_SOURCES);
-  if (filters?.limit) {
-    priorityQuery = priorityQuery.limit(filters.limit);
-  }
+  if (filters?.limit) priorityQuery = priorityQuery.limit(filters.limit);
 
   const { data: priorityData, error: priorityError } = await priorityQuery;
-  if (priorityError) {
-    console.error("Error fetching priority products:", priorityError);
-    return [];
-  }
+  if (priorityError) throw priorityError;
 
   const priorityProducts = (priorityData ?? []) as unknown as Product[];
 
-  // 2. If we have enough priority products to satisfy the limit, return them
+  // 2. If we need more products to reach the limit, fetch others
   if (filters?.limit && priorityProducts.length >= filters.limit) {
     return priorityProducts;
   }
 
-  // 3. Otherwise, fetch the rest to fill the gap
   const remainingLimit = filters?.limit ? filters.limit - priorityProducts.length : undefined;
   
-  let othersQuery = buildBaseQuery().not("source", "in", `(${PRIORITY_SOURCES.join(",")})`);
-  
-  if (remainingLimit) {
-    othersQuery = othersQuery.limit(remainingLimit);
-  }
+  let othersQuery = buildBaseQuery().not("source", "in", `(${PRIORITY_SOURCES.map(s => `"${s}"`).join(",")})`);
+  if (remainingLimit) othersQuery = othersQuery.limit(remainingLimit);
 
   const { data: othersData, error: othersError } = await othersQuery;
-  if (othersError) {
-    console.error("Error fetching other products:", othersError);
-    return priorityProducts;
-  }
+  if (othersError) throw othersError;
 
   const otherProducts = (othersData ?? []) as unknown as Product[];
 
   return [...priorityProducts, ...otherProducts];
+}
+
+// Lightweight query for sitemap — only the fields needed to derive intersection URLs.
+// Paginates around Supabase PostgREST's 1,000-row default cap so the full catalog
+// is reflected in the sitemap, not just the first 1,000 rows.
+export async function getIntersectionKeys(): Promise<Array<{ category: string; animal: string }>> {
+  const CHUNK = 1000;
+  const combos = new Set<string>();
+  for (let offset = 0; offset < 20000; offset += CHUNK) {
+    const { data, error } = await supabase
+      .from("products")
+      .select("category,animal")
+      .eq("in_stock", true)
+      .not("animal", "is", null)
+      .range(offset, offset + CHUNK - 1);
+    if (error) return Array.from(combos).map(parseCombo);
+    const rows = (data ?? []) as Array<{ category: string; animal: string }>;
+    for (const r of rows) {
+      if (r.animal) combos.add(`${r.category}|${r.animal}`);
+    }
+    if (rows.length < CHUNK) break;
+  }
+  return Array.from(combos).map(parseCombo);
+}
+
+function parseCombo(s: string): { category: string; animal: string } {
+  const [category, animal] = s.split("|");
+  return { category, animal };
 }
 
 export async function getProduct(slug: string): Promise<Product | null> {
