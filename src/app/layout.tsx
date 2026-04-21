@@ -67,10 +67,7 @@ export default function RootLayout({
             gtag('config', '${GA_ID}');
           `}
         </Script>
-        <Script
-          src="https://s.skimresources.com/js/301531X1789497.skimlinks.js"
-          strategy="afterInteractive"
-        />
+        
       </body>
     </html>
   );
