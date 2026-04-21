@@ -39,10 +39,15 @@ export async function generateMetadata({
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const { category } = await params;
+  const resolvedSearchParams = await searchParams;
+  const pageParam = resolvedSearchParams.page;
+  const page = typeof pageParam === "string" ? parseInt(pageParam, 10) : 1;
 
   if (!CATEGORIES.includes(category as (typeof CATEGORIES)[number])) {
     notFound();
@@ -52,7 +57,7 @@ export default async function CategoryPage({
 
   const [cat, products, animalsWithProducts, totalCount] = await Promise.all([
     getCategory(category),
-    getProducts({ category, limit: PRODUCT_GRID_CAP }),
+    getProducts({ category, limit: PRODUCT_GRID_CAP, page }),
     getAnimalsForCategory(category),
     getProductCountByCategory(category),
   ]);
@@ -61,7 +66,7 @@ export default async function CategoryPage({
 
   const label = CATEGORY_LABELS[category] || cat.name;
   const faqs = generateCategoryFAQs(cat, products, animalsWithProducts);
-  const isTruncated = totalCount > products.length;
+  const totalPages = Math.ceil(totalCount / PRODUCT_GRID_CAP);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -73,7 +78,7 @@ export default async function CategoryPage({
         </h1>
         <p className="text-foreground/70">
           {totalCount} products compared across {animalsWithProducts.length} animals
-          {isTruncated && ` — showing top ${products.length}, browse by animal below for the full selection`}
+          {totalPages > 1 && ` — showing page ${page} of ${totalPages}, browse by animal below for the full selection`}
         </p>
       </header>
 
@@ -110,6 +115,39 @@ export default async function CategoryPage({
       <section className="mb-12">
         <h2 className="text-2xl font-bold mb-6">All {label}</h2>
         <ProductGrid products={products} />
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-12">
+            {page > 1 ? (
+              <Link 
+                href={`/${category}/?page=${page - 1}`} 
+                className="px-6 py-2 bg-forest text-white rounded-md hover:bg-forest/90 transition-colors"
+              >
+                Previous
+              </Link>
+            ) : (
+              <span className="px-6 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">
+                Previous
+              </span>
+            )}
+            <span className="px-4 py-2 font-medium text-foreground/80">
+              Page {page} of {totalPages}
+            </span>
+            {page < totalPages ? (
+              <Link 
+                href={`/${category}/?page=${page + 1}`} 
+                className="px-6 py-2 bg-forest text-white rounded-md hover:bg-forest/90 transition-colors"
+              >
+                Next
+              </Link>
+            ) : (
+              <span className="px-6 py-2 bg-gray-200 text-gray-400 rounded-md cursor-not-allowed">
+                Next
+              </span>
+            )}
+          </div>
+        )}
       </section>
 
       {/* FAQ — data-driven via generateCategoryFAQs */}

@@ -43,7 +43,7 @@ export const CATEGORY_LABELS: Record<string, string> = {
   mugs: "Mugs",
   signs: "Signs",
   "tote-bags": "Tote Bags",
-  "art-prints": "Art Prints",
+  "art-prints": "Wall Art & Art Prints",
   magnets: "Magnets",
   caps: "Caps & Hats",
   stickers: "Stickers",

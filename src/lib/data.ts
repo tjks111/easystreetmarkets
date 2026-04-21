@@ -53,8 +53,12 @@ export async function getProducts(filters?: {
   animal?: string;
   featured?: boolean;
   limit?: number;
+  page?: number;
 }): Promise<Product[]> {
   const PRIORITY_SOURCES = ["amazon", "ebay"];
+  const limit = filters?.limit ?? 100;
+  const page = filters?.page ?? 1;
+  const offset = (page > 0 ? page - 1 : 0) * limit;
 
   // Helper to build the base query with shared filters
   const buildBaseQuery = () => {
@@ -72,31 +76,61 @@ export async function getProducts(filters?: {
       .order("rating", { ascending: false, nullsFirst: false });
   };
 
-  // 1. Fetch priority products (Amazon/eBay) first
-  let priorityQuery = buildBaseQuery().in("source", PRIORITY_SOURCES);
-  if (filters?.limit) priorityQuery = priorityQuery.limit(filters.limit);
+  // We need the total count of priority products matching the filters to know how to paginate
+  let countQuery = supabase
+    .from("products")
+    .select("*", { count: "exact", head: true })
+    .eq("in_stock", true)
+    .in("source", PRIORITY_SOURCES);
+    
+  if (filters?.category) countQuery = countQuery.eq("category", filters.category);
+  if (filters?.animal) countQuery = countQuery.eq("animal", filters.animal);
+  if (filters?.featured) countQuery = countQuery.eq("is_featured", true);
 
-  const { data: priorityData, error: priorityError } = await priorityQuery;
-  if (priorityError) throw priorityError;
+  const { count: priorityCount, error: countError } = await countQuery;
+  if (countError) throw countError;
+  const pCount = priorityCount || 0;
 
-  const priorityProducts = (priorityData ?? []) as unknown as Product[];
+  let results: Product[] = [];
 
-  // 2. If we need more products to reach the limit, fetch others
-  if (filters?.limit && priorityProducts.length >= filters.limit) {
-    return priorityProducts;
+  // Case 1: The entire requested page starts within priority products
+  if (offset < pCount) {
+    let pQuery = buildBaseQuery()
+      .in("source", PRIORITY_SOURCES)
+      .range(offset, offset + limit - 1);
+      
+    const { data: pData, error: pError } = await pQuery;
+    if (pError) throw pError;
+    
+    results = (pData ?? []) as unknown as Product[];
+
+    // If we need more to fill the limit, fetch from others starting at offset 0
+    if (results.length < limit) {
+      const remainingLimit = limit - results.length;
+      let oQuery = buildBaseQuery()
+        .not("source", "in", `(${PRIORITY_SOURCES.map(s => `"${s}"`).join(",")})`)
+        .range(0, remainingLimit - 1);
+        
+      const { data: oData, error: oError } = await oQuery;
+      if (oError) throw oError;
+      
+      results = [...results, ...((oData ?? []) as unknown as Product[])];
+    }
+  }
+  // Case 2: The requested page is entirely within other products
+  else {
+    const othersOffset = offset - pCount;
+    let oQuery = buildBaseQuery()
+      .not("source", "in", `(${PRIORITY_SOURCES.map(s => `"${s}"`).join(",")})`)
+      .range(othersOffset, othersOffset + limit - 1);
+      
+    const { data: oData, error: oError } = await oQuery;
+    if (oError) throw oError;
+    
+    results = (oData ?? []) as unknown as Product[];
   }
 
-  const remainingLimit = filters?.limit ? filters.limit - priorityProducts.length : undefined;
-  
-  let othersQuery = buildBaseQuery().not("source", "in", `(${PRIORITY_SOURCES.map(s => `"${s}"`).join(",")})`);
-  if (remainingLimit) othersQuery = othersQuery.limit(remainingLimit);
-
-  const { data: othersData, error: othersError } = await othersQuery;
-  if (othersError) throw othersError;
-
-  const otherProducts = (othersData ?? []) as unknown as Product[];
-
-  return [...priorityProducts, ...otherProducts];
+  return results;
 }
 
 // Lightweight query for sitemap — only the fields needed to derive intersection URLs.
