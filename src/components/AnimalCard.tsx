@@ -20,8 +20,33 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
       href={`/animals/${animal.slug}/`}
       className="group flex flex-col bg-white rounded-lg border border-foreground/5 hover:border-forest/40 hover:shadow-lg transition-all overflow-hidden"
     >
-      <div className="aspect-[4/3] bg-sand flex items-center justify-center text-6xl overflow-hidden">
-        🌿
+      <div className="aspect-[4/3] bg-sand flex items-center justify-center overflow-hidden relative">
+        {animal.image_url ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={animal.image_url}
+              alt={animal.common_name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              style={{ filter: "saturate(0.85) contrast(1.05) brightness(0.98)" }}
+              loading="lazy"
+            />
+            {/* Unified forest-tinted overlay so all photos read as one set */}
+            <div
+              className="absolute inset-0 pointer-events-none mix-blend-multiply opacity-25 group-hover:opacity-10 transition-opacity duration-500"
+              style={{ background: "linear-gradient(135deg, #2d4a2b 0%, #3d5d3a 50%, #5b7a4a 100%)" }}
+              aria-hidden="true"
+            />
+            {/* Subtle vignette for depth */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{ boxShadow: "inset 0 -40px 60px -20px rgba(20, 35, 18, 0.45)" }}
+              aria-hidden="true"
+            />
+          </>
+        ) : (
+          <div className="text-6xl">🌿</div>
+        )}
       </div>
       <div className="p-4 flex-1 flex flex-col gap-2">
         <h3 className="font-bold group-hover:text-forest transition-colors">

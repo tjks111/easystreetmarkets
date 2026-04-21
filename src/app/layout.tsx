@@ -31,6 +31,11 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
+  verification: {
+    other: {
+      "impact-site-verification": "54c01787-3494-4fb6-9942-a1f45d7510c8",
+    },
+  },
 };
 
 export default function RootLayout({
@@ -62,6 +67,10 @@ export default function RootLayout({
             gtag('config', '${GA_ID}');
           `}
         </Script>
+        <Script
+          src="https://s.skimresources.com/js/301531X1789497.skimlinks.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

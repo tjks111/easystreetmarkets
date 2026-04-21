@@ -80,13 +80,27 @@ export default async function AuthorPage() {
           ))}
         </ul>
 
-        <h2 className="text-2xl font-bold mt-8 mb-3">Get in Touch</h2>
+        <h2 className="text-2xl font-bold mt-8 mb-3">Get in Touch & Verification</h2>
         <p className="mb-4 leading-relaxed text-foreground/80">
           If you run a wildlife art brand, a conservation nonprofit, or a zoo/museum gift
           shop and want to talk about placement, partnerships, or wholesale — or if you&apos;re
           a nature enthusiast with a product recommendation or a correction on any of our
-          animal pages — I read every message.
+          animal pages — I read every message at <a href="mailto:tim@saaschoice.co" className="text-forest underline">tim@saaschoice.co</a>.
         </p>
+        <p className="mb-4 leading-relaxed text-foreground/80">
+          You can also verify my background and follow my other projects here:
+        </p>
+        <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80">
+          <li>
+            <a href="https://www.linkedin.com/in/tim-s-563b71123/" target="_blank" rel="noopener noreferrer" className="text-forest underline">LinkedIn</a>
+          </li>
+          <li>
+            <a href="https://x.com/timjks111" target="_blank" rel="noopener noreferrer" className="text-forest underline">X (Twitter)</a>
+          </li>
+          <li>
+            <a href="https://saaschoice.co" target="_blank" rel="noopener noreferrer" className="text-forest underline">SaaS Choice</a>
+          </li>
+        </ul>
       </article>
 
       <script
@@ -100,6 +114,11 @@ export default async function AuthorPage() {
             jobTitle: "Founder & Curator",
             worksFor: { "@id": `${SITE_URL}/#organization` },
             url: `${SITE_URL}/about/tim/`,
+            sameAs: [
+              "https://www.linkedin.com/in/tim-s-563b71123/",
+              "https://x.com/timjks111",
+              "https://saaschoice.co"
+            ],
             knowsAbout: [
               "Wildlife merchandise",
               "Programmatic SEO",

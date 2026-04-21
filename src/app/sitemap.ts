@@ -1,14 +1,18 @@
 import type { MetadataRoute } from "next";
-import { getCategories, getAnimals, getProducts, getCollections, getBlogPosts } from "@/lib/data";
+import { getCategories, getAnimals, getIntersectionKeys, getCollections, getBlogPosts } from "@/lib/data";
 import { SITE_URL } from "@/lib/utils";
 
-export const revalidate = 3600;
+// Force dynamic rendering so new products propagate to the sitemap immediately.
+// Google only crawls this a few times per day and users never hit it, so the
+// per-request Supabase cost is trivial. Caching it at the edge (via revalidate)
+// leaves the sitemap stale for up to an hour after catalog expansions.
+export const dynamic = "force-dynamic";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [categories, animals, products, collections, blogPosts] = await Promise.all([
+  const [categories, animals, intersectionKeys, collections, blogPosts] = await Promise.all([
     getCategories(),
     getAnimals(),
-    getProducts({}),
+    getIntersectionKeys(),
     getCollections(),
     getBlogPosts(),
   ]);
@@ -54,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Intersection pages: category x animal where products exist
   const intersectionSet = new Set<string>();
-  products.forEach((p) => {
+  intersectionKeys.forEach((p) => {
     if (p.animal) {
       intersectionSet.add(`${p.category}/${p.animal}`);
     }

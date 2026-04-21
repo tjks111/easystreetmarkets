@@ -10,7 +10,9 @@ import {
 } from "@/lib/data";
 import ProductGrid from "@/components/ProductGrid";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import { CATEGORIES, CATEGORY_LABELS, SITE_URL } from "@/lib/utils";
+import { CATEGORIES, CATEGORY_LABELS, SITE_URL, SITE_NAME } from "@/lib/utils";
+import { generateIntersectionEditorial } from "@/lib/guide-content";
+import { graph, breadcrumbSchema, ORG_ID } from "@/lib/schema";
 
 export const revalidate = 3600;
 export const dynamicParams = true;
@@ -25,8 +27,8 @@ export async function generateMetadata({
   if (!cat || !an) return {};
   const label = CATEGORY_LABELS[category] || cat.name;
   return {
-    title: `${an.common_name} ${label} — Compared`,
-    description: `The best ${an.common_name.toLowerCase()} ${label.toLowerCase()} compared across Amazon, Redbubble, Etsy, and independent brands.`,
+    title: `${an.common_name} ${label} — Compared & Reviewed`,
+    description: `Compare ${an.common_name.toLowerCase()} ${label.toLowerCase()} from Etsy, Amazon, Walmart, Zazzle, Redbubble, and more. Prices, sellers, and buying guide.`,
     alternates: { canonical: `${SITE_URL}/${category}/${animal}/` },
   };
 }
@@ -56,14 +58,17 @@ export default async function IntersectionPage({
   const otherCats = otherCategoriesForAnimal.filter((c) => c !== category).slice(0, 6);
   const relatedAnimals = otherAnimalsForCategory.filter((a) => a !== animal).slice(0, 5);
 
-  // noindex if thin content
+  // Thin-content guard: if the combo has fewer than 3 products, noindex it rather
+  // than serve a sparse page that risks a programmatic-spam signal.
   const isThin = products.length < 3;
+
+  // Procedural editorial — 500+ words of unique content per (category, animal) combo.
+  // Replaces the previous 1-paragraph stub with synthesized long-form from data.
+  const editorial = generateIntersectionEditorial(cat, an, products);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      {isThin && (
-        <meta name="robots" content="noindex,follow" />
-      )}
+      {isThin && <meta name="robots" content="noindex,follow" />}
 
       <Breadcrumbs
         items={[
@@ -81,25 +86,51 @@ export default async function IntersectionPage({
         )}
       </header>
 
-      {/* Mini animal bio */}
-      {an.description && (
-        <section className="bg-sand rounded-lg p-6 mb-8 max-w-3xl">
-          <p className="text-foreground/80 leading-relaxed">
-            {an.description.split("\n\n")[0]}
-          </p>
-          <Link
-            href={`/animals/${animal}/`}
-            className="inline-block mt-3 text-forest font-medium hover:underline text-sm"
-          >
-            Read more about the {an.common_name} →
-          </Link>
-        </section>
-      )}
+      {/* Intro + Why it matters */}
+      <section className="max-w-3xl mb-10 prose prose-forest">
+        <p className="mb-5 leading-relaxed text-foreground/85 text-lg">{editorial.intro}</p>
+        <p className="mb-5 leading-relaxed text-foreground/80">{editorial.whyMatters}</p>
+      </section>
 
       {/* Products */}
       <section className="mb-12">
+        <h2 className="text-2xl font-bold mb-6">
+          All {an.common_name} {label}
+        </h2>
         <ProductGrid products={products} />
       </section>
+
+      {/* What to look for */}
+      <section className="max-w-3xl mb-10">
+        <h2 className="text-2xl font-bold mb-4">
+          What to Look for in {an.common_name} {label}
+        </h2>
+        <p className="leading-relaxed text-foreground/80">{editorial.whatToLookFor}</p>
+      </section>
+
+      {/* Price guide */}
+      <section className="max-w-3xl mb-10 bg-sand rounded-lg p-6">
+        <h2 className="text-2xl font-bold mb-4">Price Guide</h2>
+        <p className="leading-relaxed text-foreground/80">{editorial.priceGuide}</p>
+      </section>
+
+      {/* Picking the right one */}
+      <section className="max-w-3xl mb-10">
+        <h2 className="text-2xl font-bold mb-4">
+          Picking the Right {an.common_name.split(" ").pop()} {label.replace(/s$/, "")}
+        </h2>
+        <p className="leading-relaxed text-foreground/80">{editorial.pickingRight}</p>
+      </section>
+
+      {/* Conservation note (conditional) */}
+      {editorial.conservationNote && (
+        <section className="max-w-3xl mb-10 bg-forest/10 border border-forest/20 rounded-lg p-6">
+          <h2 className="text-xl font-bold mb-3 text-forest">
+            {an.common_name} Conservation Note
+          </h2>
+          <p className="leading-relaxed text-foreground/80">{editorial.conservationNote}</p>
+        </section>
+      )}
 
       {/* Cross-links: other categories for this animal */}
       {otherCats.length > 0 && (
@@ -137,22 +168,67 @@ export default async function IntersectionPage({
         </section>
       )}
 
-      {/* JSON-LD */}
+      {/* Learn more about the animal */}
+      <section className="max-w-3xl mb-10">
+        <Link
+          href={`/animals/${animal}/`}
+          className="inline-block text-forest font-medium hover:underline"
+        >
+          Read more about the {an.common_name} →
+        </Link>
+      </section>
+
+      {/* FAQ */}
+      <section className="bg-sand rounded-lg p-8 mb-12">
+        <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
+        <div className="space-y-5">
+          {editorial.faqs.map((faq, i) => (
+            <div key={i}>
+              <h3 className="font-semibold mb-2">{faq.question}</h3>
+              <p className="text-foreground/70 text-sm leading-relaxed">{faq.answer}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* JSON-LD: CollectionPage + BreadcrumbList + FAQPage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: `${an.common_name} ${label}`,
-            url: `${SITE_URL}/${category}/${animal}/`,
-            about: {
-              "@type": "Thing",
-              name: an.common_name,
-              alternateName: an.scientific_name,
-            },
-            publisher: { "@id": `${SITE_URL}/#organization` },
-          }),
+          __html: JSON.stringify(
+            graph([
+              {
+                "@type": "CollectionPage",
+                "@id": `${SITE_URL}/${category}/${animal}/#collectionpage`,
+                name: `${an.common_name} ${label}`,
+                description: `${products.length} ${an.common_name.toLowerCase()} ${label.toLowerCase()} compared across Etsy, Amazon, Walmart, and other affiliate-capable stores.`,
+                url: `${SITE_URL}/${category}/${animal}/`,
+                isPartOf: { "@id": `${SITE_URL}/#website` },
+                publisher: { "@id": ORG_ID },
+                about: {
+                  "@type": "Thing",
+                  name: an.common_name,
+                  alternateName: an.scientific_name || undefined,
+                },
+              },
+              breadcrumbSchema([
+                { name: SITE_NAME, url: SITE_URL },
+                { name: label, url: `${SITE_URL}/${category}/` },
+                { name: an.common_name, url: `${SITE_URL}/${category}/${animal}/` },
+              ]),
+              {
+                "@type": "FAQPage",
+                mainEntity: editorial.faqs.map((faq) => ({
+                  "@type": "Question",
+                  name: faq.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.answer,
+                  },
+                })),
+              },
+            ])
+          ),
         }}
       />
     </div>

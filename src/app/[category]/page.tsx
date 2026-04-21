@@ -2,14 +2,15 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
-  getCategories,
   getCategory,
   getProducts,
   getAnimalsForCategory,
+  getProductCountByCategory,
 } from "@/lib/data";
 import ProductGrid from "@/components/ProductGrid";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { CATEGORIES, CATEGORY_LABELS, SITE_URL, SITE_NAME, capitalize } from "@/lib/utils";
+import { generateCategoryFAQs } from "@/lib/guide-content";
 import { graph, breadcrumbSchema, ORG_ID } from "@/lib/schema";
 
 export const revalidate = 3600;
@@ -29,7 +30,9 @@ export async function generateMetadata({
   const label = CATEGORY_LABELS[category] || cat.name;
   return {
     title: `Best Wildlife ${label} — Curated & Compared`,
-    description: cat.meta_description || `Compare the best wildlife ${label.toLowerCase()} from Amazon, Redbubble, Etsy, and independent brands.`,
+    description:
+      cat.meta_description ||
+      `Compare the best wildlife ${label.toLowerCase()} from Amazon, Redbubble, Etsy, and independent brands.`,
     alternates: { canonical: `${SITE_URL}/${category}/` },
   };
 }
@@ -45,15 +48,20 @@ export default async function CategoryPage({
     notFound();
   }
 
-  const [cat, products, animalsWithProducts] = await Promise.all([
+  const PRODUCT_GRID_CAP = 100;
+
+  const [cat, products, animalsWithProducts, totalCount] = await Promise.all([
     getCategory(category),
-    getProducts({ category }),
+    getProducts({ category, limit: PRODUCT_GRID_CAP }),
     getAnimalsForCategory(category),
+    getProductCountByCategory(category),
   ]);
 
   if (!cat) notFound();
 
   const label = CATEGORY_LABELS[category] || cat.name;
+  const faqs = generateCategoryFAQs(cat, products, animalsWithProducts);
+  const isTruncated = totalCount > products.length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -64,7 +72,8 @@ export default async function CategoryPage({
           Best Wildlife {label} — Curated &amp; Compared
         </h1>
         <p className="text-foreground/70">
-          {products.length} products compared across {animalsWithProducts.length} animals
+          {totalCount} products compared across {animalsWithProducts.length} animals
+          {isTruncated && ` — showing top ${products.length}, browse by animal below for the full selection`}
         </p>
       </header>
 
@@ -103,30 +112,16 @@ export default async function CategoryPage({
         <ProductGrid products={products} />
       </section>
 
-      {/* FAQ */}
+      {/* FAQ — data-driven via generateCategoryFAQs */}
       <section className="bg-sand rounded-lg p-8 mb-12">
         <h2 className="text-2xl font-bold mb-6">Frequently Asked Questions</h2>
-        <div className="space-y-4">
-          <div>
-            <h3 className="font-semibold mb-1">What are the best wildlife {label.toLowerCase()} for nature lovers?</h3>
-            <p className="text-foreground/70 text-sm">
-              We curate across animal, art style, and price so you can match the gift to the person.
-              Popular picks are elephants, wolves, bears, and sea turtles.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-1">Where are these products from?</h3>
-            <p className="text-foreground/70 text-sm">
-              We compare across Amazon, Redbubble, Etsy, and independent wildlife brands. Every product links
-              directly to the seller.
-            </p>
-          </div>
-          <div>
-            <h3 className="font-semibold mb-1">Do you earn a commission?</h3>
-            <p className="text-foreground/70 text-sm">
-              Yes, when you buy through our affiliate links. No vendor pays for placement.
-            </p>
-          </div>
+        <div className="space-y-5">
+          {faqs.map((faq, i) => (
+            <div key={i}>
+              <h3 className="font-semibold mb-2">{faq.question}</h3>
+              <p className="text-foreground/70 text-sm leading-relaxed">{faq.answer}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -151,32 +146,14 @@ export default async function CategoryPage({
               ]),
               {
                 "@type": "FAQPage",
-                mainEntity: [
-                  {
-                    "@type": "Question",
-                    name: `What are the best wildlife ${label.toLowerCase()} for nature lovers?`,
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: `We curate ${label.toLowerCase()} across animal, art style, and price so you can match the gift to the person. Popular picks are elephants, wolves, bears, and sea turtles.`,
-                    },
+                mainEntity: faqs.map((faq) => ({
+                  "@type": "Question",
+                  name: faq.question,
+                  acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.answer,
                   },
-                  {
-                    "@type": "Question",
-                    name: `Where are these ${label.toLowerCase()} from?`,
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "We compare across Amazon, Redbubble, Etsy, and independent wildlife brands. Every product links directly to the seller.",
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: "Do you earn a commission?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "Yes, when you buy through our affiliate links. No vendor pays for placement.",
-                    },
-                  },
-                ],
+                })),
               },
             ])
           ),

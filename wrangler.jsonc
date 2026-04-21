@@ -6,6 +6,7 @@
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "workers_dev": true,
   "preview_urls": true,
+  "placement": { "mode": "smart" },
   "routes": [
     { "pattern": "easystreetmarkets.com", "custom_domain": true },
     { "pattern": "www.easystreetmarkets.com", "custom_domain": true }

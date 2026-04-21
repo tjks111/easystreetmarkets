@@ -37,8 +37,10 @@ export default async function CollectionDetailPage({
   const collection = await getCollection(slug);
   if (!collection) notFound();
 
-  // For collections without explicit product_ids, pull a themed selection
-  const allProducts = await getProducts({});
+  // For collections without explicit product_ids, pull a themed selection.
+  // Cap the pool to 500 — enough headroom to find 24 picks after filtering,
+  // and keeps the Worker payload under the memory budget.
+  const allProducts = await getProducts({ limit: 500 });
 
   let products = allProducts;
 

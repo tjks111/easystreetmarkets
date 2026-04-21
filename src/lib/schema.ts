@@ -24,9 +24,29 @@ export function organizationSchema() {
     sameAs: [
       "https://www.facebook.com/EasyStreetMarkets/",
       "https://www.bbb.org/us/fl/gainesville/profile/screen-printing/easy-street-markets-0403-183500883",
+      "https://en.wikipedia.org/wiki/E-commerce",
+      "https://www.wikidata.org/wiki/Q81307",
     ],
     founder: {
       "@id": PERSON_ID,
+    },
+  };
+}
+
+export function personSchema() {
+  return {
+    "@type": "Person",
+    "@id": PERSON_ID,
+    name: "Tim",
+    url: `${SITE_URL}/about/tim/`,
+    jobTitle: "Founder",
+    sameAs: [
+      "https://en.wikipedia.org/wiki/Entrepreneurship",
+      "https://www.wikidata.org/wiki/Q131524",
+      "https://github.com/tjks111",
+    ],
+    worksFor: {
+      "@id": ORG_ID,
     },
   };
 }
@@ -59,6 +79,39 @@ export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
       name: item.name,
       item: item.url,
     })),
+  };
+}
+
+export function articleSchema(
+  post: {
+    title: string;
+    excerpt?: string | null;
+    published_at: string;
+    author: string;
+    slug: string;
+  },
+  topicEntities: string[] = []
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt || undefined,
+    datePublished: post.published_at,
+    author: {
+      "@type": "Person",
+      "@id": PERSON_ID,
+      name: post.author,
+      url: `${SITE_URL}/about/tim/`,
+    },
+    publisher: { "@id": ORG_ID },
+    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}/`,
+    ...(topicEntities.length > 0 && {
+      about: topicEntities.map((url) => ({
+        "@type": "Thing",
+        sameAs: url,
+      })),
+    }),
   };
 }
 
