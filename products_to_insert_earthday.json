@@ -5835,5 +5835,67 @@
     "in_stock": true,
     "review_count": 0,
     "rating": null
+  },
+  {
+    "slug": "earth-day-dolphin-t-shirt-vol-26",
+    "name": "Earth Day Dolphin Tee - Vol 26",
+    "description": "Exclusive Earth Day 2026 Print-on-Demand design.",
+    "category": "t-shirts",
+    "animal": "dolphin",
+    "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-26-white.png?",
+    "price_min": 26.0,
+    "price_max": 26.0,
+    "source": "printful-own",
+    "is_own_product": true,
+    "is_featured": true,
+    "product_type": "pod",
+    "stripe_price_id": "price_1TPY14Kt41Pj0Rpnn3W68y9A",
+    "printful_variant_id": "4012",
+    "variants": [
+      {
+        "color": "Black",
+        "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-26-black.png?",
+        "variant_id": "4017"
+      },
+      {
+        "color": "White",
+        "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-26-white.png?",
+        "variant_id": "4012"
+      }
+    ],
+    "in_stock": true,
+    "review_count": 0,
+    "rating": null
+  },
+  {
+    "slug": "earth-day-dolphin-t-shirt-vol-29",
+    "name": "Earth Day Dolphin Tee - Vol 29",
+    "description": "Exclusive Earth Day 2026 Print-on-Demand design.",
+    "category": "t-shirts",
+    "animal": "dolphin",
+    "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-29-white.png?",
+    "price_min": 26.0,
+    "price_max": 26.0,
+    "source": "printful-own",
+    "is_own_product": true,
+    "is_featured": true,
+    "product_type": "pod",
+    "stripe_price_id": "price_1TPY1jKt41Pj0RpnJ11EbKdV",
+    "printful_variant_id": "4012",
+    "variants": [
+      {
+        "color": "Black",
+        "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-29-black.png?",
+        "variant_id": "4017"
+      },
+      {
+        "color": "White",
+        "image_url": "https://ykpgulbugkxiqldvgsjs.supabase.co/storage/v1/object/public/product-images/pod_mockups/earth-day-dolphin-t-shirt-vol-29-white.png?",
+        "variant_id": "4012"
+      }
+    ],
+    "in_stock": true,
+    "review_count": 0,
+    "rating": null
   }
 ]
