@@ -3,6 +3,7 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   eslint: { ignoreDuringBuilds: true },
+  trailingSlash: false,
   output: "standalone",
   outputFileTracingRoot: path.resolve(__dirname),
   images: {

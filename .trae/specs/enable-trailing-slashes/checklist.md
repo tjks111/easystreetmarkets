@@ -1,0 +1,3 @@
+- [x] `next.config.ts` includes `trailingSlash: true` configuration
+- [x] `src/app/sitemap.ts` appends a trailing slash to all static routes (excluding root `/` which is naturally correct)
+- [x] `src/app/sitemap.ts` appends a trailing slash to dynamic routes (`blogRoutes`, `categoryRoutes`, `animalRoutes`, `collectionRoutes`, `intersectionRoutes`)

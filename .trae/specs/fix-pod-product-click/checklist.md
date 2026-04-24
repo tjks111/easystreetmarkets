@@ -1,0 +1,5 @@
+- [ ] `src/components/PodCardWrapper.tsx` exists and uses `useShoppingCart`.
+- [ ] `src/components/ProductCard.tsx` no longer imports `AddToCartButton`.
+- [ ] `src/components/ProductCard.tsx` uses `PodCardWrapper` for POD products and an `<a>` tag for affiliate products.
+- [ ] Clicking anywhere on a POD product card adds the item to the cart without navigating to the homepage.
+- [ ] `src/components/AddToCartButton.tsx` has been deleted.

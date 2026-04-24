@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Curated Wildlife Collections",
   description: "Curated collections of wildlife and nature merchandise: gifts for nature lovers, endangered species, zoo gift shop bestsellers, and more.",
-  alternates: { canonical: `${SITE_URL}/collections/` },
+  alternates: { canonical: `${SITE_URL}/collections` },
 };
 
 export default async function CollectionsIndexPage() {
@@ -30,7 +30,7 @@ export default async function CollectionsIndexPage() {
         {collections.map((c) => (
           <Link
             key={c.slug}
-            href={`/collections/${c.slug}/`}
+            href={`/collections/${c.slug}`}
             className="bg-white rounded-lg border border-forest/10 hover:border-forest/40 hover:shadow-lg transition-all p-6"
           >
             <h2 className="font-bold text-xl text-forest mb-2">{c.name}</h2>

@@ -1,0 +1,13 @@
+# Tasks
+- [x] Task 1: Create shared Category Page component logic.
+  - [x] SubTask 1.1: Extract the UI from `src/app/[category]/page.tsx` into a shared component or reusable function to avoid code duplication between the base route and the paginated route.
+- [x] Task 2: Implement path-based pagination route.
+  - [x] SubTask 2.1: Create `src/app/[category]/page/[page]/page.tsx`.
+  - [x] SubTask 2.2: Implement `generateStaticParams` (or rely on ISR with `export const revalidate = 3600`) and out-of-bounds `notFound()` checking.
+  - [x] SubTask 2.3: Set the robots meta tag to `noindex, follow` for paginated pages to protect crawl budget.
+- [x] Task 3: Refactor base category route.
+  - [x] SubTask 3.1: Remove `searchParams` from `src/app/[category]/page.tsx` to guarantee full SSG.
+  - [x] SubTask 3.2: Update the Next/Previous buttons to point to `/[category]/page/2/` instead of `/[category]/?page=2`.
+- [x] Task 4: Verify SEO and performance constraints.
+  - [x] SubTask 4.1: Ensure base category page still renders canonical tags correctly.
+  - [x] SubTask 4.2: Test pagination navigation to confirm no infinite loops exist.

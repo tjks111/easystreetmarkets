@@ -6,7 +6,7 @@ import { SITE_URL, SITE_NAME } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "About Easy Street Markets",
   description: "Founded 2003 in Gainesville, FL as a wildlife merchandise store. Relaunched 2026 as the internet's first wildlife merchandise comparison directory.",
-  alternates: { canonical: `${SITE_URL}/about/` },
+  alternates: { canonical: `${SITE_URL}/about` },
 };
 
 export default function AboutPage() {
@@ -76,7 +76,7 @@ export default function AboutPage() {
         <p className="mb-4 leading-relaxed text-foreground/80">
           Have a product you think we should feature? A question about a species? A request from a
           zoo or museum gift shop?{" "}
-          <Link href="/about/tim/" className="text-forest underline">Meet the person behind the site</Link>.
+          <Link href="/about/tim" className="text-forest underline">Meet the person behind the site</Link>.
         </p>
       </article>
 

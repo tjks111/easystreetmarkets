@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Animal Directory — 60+ Species",
   description: "Browse 60+ wildlife species with educational content, conservation status, and curated merchandise. From elephants to monarch butterflies.",
-  alternates: { canonical: `${SITE_URL}/animals/` },
+  alternates: { canonical: `${SITE_URL}/animals` },
 };
 
 export default async function AnimalDirectoryPage() {

@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Blog — Wildlife Merchandise Guides, Reviews & Commentary",
   description: "Honest writing about the wildlife merchandise market: the Safari Scroll, the Plumage Problem, the Extinction Shelf, and more.",
-  alternates: { canonical: `${SITE_URL}/blog/` },
+  alternates: { canonical: `${SITE_URL}/blog` },
 };
 
 function formatDate(iso: string): string {
@@ -37,7 +37,7 @@ export default async function BlogIndexPage() {
       <div className="space-y-8">
         {posts.map((post) => (
           <article key={post.slug} className="bg-white rounded-lg border border-forest/10 p-6 hover:border-forest/40 hover:shadow-lg transition-all">
-            <Link href={`/blog/${post.slug}/`} className="block">
+            <Link href={`/blog/${post.slug}`} className="block">
               <time className="text-xs text-foreground/60">{formatDate(post.published_at)}</time>
               <h2 className="text-2xl font-bold text-forest mt-2 mb-3 hover:underline">
                 {post.title}

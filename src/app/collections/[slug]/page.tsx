@@ -24,7 +24,7 @@ export async function generateMetadata({
   return {
     title: collection.name,
     description: collection.meta_description ?? undefined,
-    alternates: { canonical: `${SITE_URL}/collections/${slug}/` },
+    alternates: { canonical: `${SITE_URL}/collections/${slug}` },
   };
 }
 

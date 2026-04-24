@@ -9,7 +9,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "About Tim — Founder & Curator",
   description: "Tim is a GTM engineer who rebuilt Easy Street Markets in 2026 as the internet's first wildlife merchandise comparison directory.",
-  alternates: { canonical: `${SITE_URL}/about/tim/` },
+  alternates: { canonical: `${SITE_URL}/about/tim` },
 };
 
 export default async function AuthorPage() {
@@ -73,7 +73,7 @@ export default async function AuthorPage() {
         <ul className="list-disc pl-6 mb-6 space-y-2 text-foreground/80">
           {posts.map((post) => (
             <li key={post.slug}>
-              <Link href={`/blog/${post.slug}/`} className="text-forest underline">
+              <Link href={`/blog/${post.slug}`} className="text-forest underline">
                 {post.title}
               </Link>
             </li>

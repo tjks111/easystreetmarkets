@@ -29,8 +29,11 @@ def main():
     seen_slugs = set()
     products = []
     for p in raw_products:
-        if p['slug'] not in seen_slugs:
+        if p.get('slug') and p['slug'] not in seen_slugs:
             seen_slugs.add(p['slug'])
+            # Default to affiliate if not specified
+            if 'product_type' not in p:
+                p['product_type'] = 'affiliate'
             products.append(p)
             
     print(f"Loaded {len(raw_products)} products. After removing internal duplicates: {len(products)} products.")
@@ -39,7 +42,10 @@ def main():
     for batch in chunk_list(products, 100):
         try:
             # upsert based on the unique 'slug' column
+            import time
+            print(f"Upserting {len(batch)} records...")
             response = supabase.table('products').upsert(batch, on_conflict='slug').execute()
+            time.sleep(1)  # Rate limiting protection
             print(f"Inserted/Updated batch of {len(batch)} products.")
             total_inserted += len(batch)
         except Exception as e:

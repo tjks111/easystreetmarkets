@@ -17,7 +17,7 @@ export default function AnimalCard({ animal }: { animal: Animal }) {
 
   return (
     <Link
-      href={`/animals/${animal.slug}/`}
+      href={`/animals/${animal.slug}`}
       className="group flex flex-col bg-white rounded-lg border border-foreground/5 hover:border-forest/40 hover:shadow-lg transition-all overflow-hidden"
     >
       <div className="aspect-[4/3] bg-sand flex items-center justify-center overflow-hidden relative">

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import Analytics from "@/components/Analytics";
+import CartProvider from "@/components/CartProvider";
+import CartDrawer from "@/components/CartDrawer";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/utils";
 import { graph, organizationSchema, websiteSchema } from "@/lib/schema";
-
-const GA_ID = "G-Z75TJXZVK3";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,28 +46,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans bg-cream text-foreground">
-        <Nav />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <CartProvider>
+          <Nav />
+          <CartDrawer />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CartProvider>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(graph([organizationSchema(), websiteSchema()])),
           }}
         />
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="ga-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `}
-        </Script>
-        
+        <Analytics />
       </body>
     </html>
   );

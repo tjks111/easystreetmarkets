@@ -1,0 +1,6 @@
+- [x] `src/app/[category]/page.tsx` no longer uses `searchParams`.
+- [x] `src/app/[category]/page/[page]/page.tsx` exists and correctly fetches products for the given page.
+- [x] Next/Previous pagination links use the `/category/page/X/` format.
+- [x] Paginated pages (`page >= 2`) include `<meta name="robots" content="noindex, follow" />` (or equivalent Next.js metadata).
+- [x] Out-of-bounds pages (e.g., `page=999` when only 5 pages exist) return a 404 Not Found.
+- [x] Base category page remains fully statically generated (SSG).

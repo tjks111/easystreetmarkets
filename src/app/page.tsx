@@ -49,7 +49,7 @@ export default async function HomePage() {
           {categories.map((cat) => (
             <Link
               key={cat.slug}
-              href={`/${cat.slug}/`}
+              href={`/${cat.slug}`}
               className="bg-white border border-forest/10 hover:bg-forest hover:text-white hover:border-forest transition-colors rounded-lg p-6 text-center"
             >
               <div className="font-semibold">{CATEGORY_LABELS[cat.slug] || cat.name}</div>
@@ -79,7 +79,7 @@ export default async function HomePage() {
           </div>
           <div className="text-center mt-8">
             <Link
-              href="/animals/"
+              href="/animals"
               className="inline-block bg-forest text-white px-6 py-3 rounded-full hover:bg-forest-light transition-colors font-medium"
             >
               Browse All 60 Animals
@@ -99,7 +99,7 @@ export default async function HomePage() {
             {blogPosts.slice(0, 3).map((post) => (
               <Link
                 key={post.slug}
-                href={`/blog/${post.slug}/`}
+                href={`/blog/${post.slug}`}
                 className="bg-white rounded-lg border border-forest/10 hover:border-forest/40 hover:shadow-lg transition-all p-6"
               >
                 <h3 className="font-bold text-lg text-forest mb-3 leading-snug">{post.title}</h3>
@@ -120,7 +120,7 @@ export default async function HomePage() {
           {collections.slice(0, 3).map((c) => (
             <Link
               key={c.slug}
-              href={`/collections/${c.slug}/`}
+              href={`/collections/${c.slug}`}
               className="bg-white rounded-lg border border-forest/10 hover:border-forest/40 hover:shadow-lg transition-all p-6"
             >
               <h3 className="font-bold text-lg text-forest mb-2">{c.name}</h3>
@@ -145,7 +145,7 @@ export default async function HomePage() {
             through our links.
           </p>
           <Link
-            href="/about/"
+            href="/about"
             className="inline-block mt-6 border border-white/40 px-6 py-2 rounded-full hover:bg-white hover:text-forest transition-colors"
           >
             Our story

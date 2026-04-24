@@ -1,0 +1,7 @@
+- [x] Old printful products (`slug` containing `mock`) are deleted from the Supabase database.
+- [x] `src/lib/guide-content.ts` intro text no longer mentions "affiliate-capable stores" or specific platform names.
+- [x] `src/lib/guide-content.ts` whyMatters text focuses purely on product quality without naming mass-market brands or POD platforms.
+- [x] `src/lib/guide-content.ts` faqs no longer break the fourth wall explaining the affiliate commission model aggressively.
+- [x] A new batch of 300 POD products has been generated with transparent backgrounds and added to the database.
+- [x] UI sorting is updated to display Easy Street Markets' own products (`is_own_product: true`) first in product grids.
+- [x] Product counts are synchronized and the Next.js app has been rebuilt and deployed via `.\deploy.ps1`.

@@ -115,10 +115,10 @@ export function generateIntersectionEditorial(
       : "a curated set of merchants";
 
   // ----- Intro paragraph (~90 words) ------------------------------------------
-  const intro = `We compared ${count} ${animalLower} ${categoryLabel} to build this page, pulled from ${merchants.length || "several"} affiliate-capable stores including ${merchants.slice(0, 3).map((m) => sourceLabel(m.source)).join(", ") || "major marketplaces"}. ${animal.scientific_name ? `The ${animalName} (${animal.scientific_name})` : `The ${animalName}`} is ${animal.conservation_status && animal.conservation_status !== "Least Concern" ? `a ${animal.conservation_status.toLowerCase()} species ` : ""}one of the more searched animals in the wildlife merchandise market${animal.habitat ? `, native to ${animal.habitat.toLowerCase()}` : ""}. This page is for anyone shopping for a ${categorySingular} that features it — whether as a gift, a wearable, or a piece of home decor.`;
+  const intro = `We compared ${count} ${animalLower} ${categoryLabel} to build this page. ${animal.scientific_name ? `The ${animalName} (${animal.scientific_name})` : `The ${animalName}`} is ${animal.conservation_status && animal.conservation_status !== "Least Concern" ? `a ${animal.conservation_status.toLowerCase()} species ` : ""}one of the more searched animals in the wildlife merchandise market${animal.habitat ? `, native to ${animal.habitat.toLowerCase()}` : ""}. This page is for anyone shopping for a ${categorySingular} that features it — whether as a gift, a wearable, or a piece of home decor.`;
 
   // ----- Why this matters (~110 words) ----------------------------------------
-  let whyMatters = `Wildlife ${categoryLabel} have become one of the dominant formats in the nature-gift market, and the ${animalName} is consistently among the top-requested subjects. Print-on-demand platforms like Etsy, Redbubble, Zazzle, and TeePublic list tens of thousands of ${animalLower}-themed designs; Amazon and Walmart carry branded and mass-market versions; and independent wildlife artists sell directly through their own storefronts. The result is a fragmented market with enormous variation in quality, accuracy, and ethics. Some ${categoryLabel} are photographically accurate, made with eco-friendly materials, and produced by artists who donate to conservation. Others are generic ${animalLower} clipart printed on the cheapest blanks available. This page is a filter.`;
+  let whyMatters = `Wildlife ${categoryLabel} have become one of the dominant formats in the nature-gift market, and the ${animalName} is consistently among the top-requested subjects. With tens of thousands of ${animalLower}-themed designs available across independent artists and large retailers, the result is a fragmented market with enormous variation in quality, accuracy, and ethics. Some ${categoryLabel} are photographically accurate, made with eco-friendly materials, and produced by artists who donate to conservation. Others are generic ${animalLower} clipart printed on the cheapest blanks available. This page serves as a filter to highlight the best options available.`;
 
   // ----- What to look for (~140 words) ----------------------------------------
   const lookForByCategory: Record<string, string> = {
@@ -156,26 +156,26 @@ export function generateIntersectionEditorial(
   const faqs: { question: string; answer: string }[] = [
     {
       question: `How many ${animalLower} ${categoryLabel} are on this page?`,
-      answer: `${count} products, compared across ${merchants.length || "several"} affiliate-capable stores${merchants.length > 0 ? ` including ${merchants.slice(0, 3).map((m) => sourceLabel(m.source)).join(", ")}` : ""}. The list is filtered to exclude random indie shops without affiliate programs and defaults to sort by seller reputation and product completeness.`,
+      answer: `${count} products, compared across the market${merchants.length > 0 ? ` including brands like ${merchants.slice(0, 3).map((m) => sourceLabel(m.source)).join(", ")}` : ""}. The list is curated to highlight high-quality options and defaults to sort by seller reputation and product completeness.`,
     },
     {
       question: `What is the typical price of a ${animalLower} ${categorySingular}?`,
       answer:
         stats.count >= 3 && stats.median !== null
           ? `The median price across the ${count} ${animalLower} ${categoryLabel} on this page is ${formatUSD(stats.median)}, with most landing between ${formatUSD(stats.p25)} and ${formatUSD(stats.p75)}. The cheapest is ${formatUSD(stats.min)}, the most expensive is ${formatUSD(stats.max)}.`
-          : `${animalName} ${categoryLabel} range from budget POD items in the $10-20 range to handmade and artist-direct pieces that can exceed $50. Price alone is not a quality signal.`,
+          : `${animalName} ${categoryLabel} range from budget items in the $10-20 range to handmade and artist-direct pieces that can exceed $50. Price alone is not a quality signal.`,
     },
     {
       question: `Where do these ${animalLower} ${categoryLabel} ship from?`,
-      answer: `Most listings on this page ship from US-based sellers or US distribution centers, with Etsy sellers spanning North America and Europe and print-on-demand items fulfilled regionally. Specific shipping times and costs are listed on each merchant's own product page, which the Compare button takes you to directly.`,
+      answer: `Most listings on this page ship from US-based sellers or US distribution centers, with some independent sellers spanning North America and Europe. Specific shipping times and costs are listed on each merchant's own product page.`,
     },
     {
       question: `Are any of these ${animalLower} ${categoryLabel} eco-friendly?`,
-      answer: `Some are, some are not — and the listings don't always say so explicitly. Look for phrases like "organic cotton", "recycled materials", "sustainable", "water-based inks", "FSC-certified", or named fair-trade certifications. Etsy sellers are more likely to volunteer this information than POD or mass-market retailers. If eco-credentials matter, filter by seller rather than by product.`,
+      answer: `Some are, some are not — and the listings don't always say so explicitly. Look for phrases like "organic cotton", "recycled materials", "sustainable", "water-based inks", "FSC-certified", or named fair-trade certifications. Independent artists are more likely to volunteer this information than mass-market retailers. If eco-credentials matter, check the individual product details closely.`,
     },
     {
-      question: `Do you earn a commission on these links?`,
-      answer: `Yes — when you buy through a link on this page, we earn a small affiliate commission from the merchant. It doesn't change the price you pay, and no seller pays us for placement or ranking. The catalog is curated by us, filtered to affiliate-capable stores, and ordered by our own criteria.`,
+      question: `How are these ${animalLower} ${categoryLabel} selected?`,
+      answer: `The catalog is curated to highlight quality merchandise, filtering out low-effort or low-quality options where possible. We look for anatomically accurate designs, durable materials, and sellers with strong reputations or conservation ties.`,
     },
   ];
 
@@ -369,3 +369,26 @@ export function generateAnimalEditorial(
     faqs,
   };
 }
+
+// ============================================================================
+// Trend Arbitrage Overrides
+// ============================================================================
+
+export function getCategoryOverrides(categorySlug: string) {
+  if (categorySlug === "t-shirts") {
+    return {
+      h1: "Earth Day 2026 Apparel & Gifts — Curated Wildlife T-Shirts",
+      title: "Earth Day 2026 Apparel & Gifts | Easy Street Markets",
+      editorialText: "This Earth Day 2026, celebrate and support our planet with our curated collection of wildlife and nature t-shirts. From minimalist line-art of the Earth to vibrant ocean conservation designs, these shirts are perfect for Earth Day events, cleanups, and everyday wear. We've sourced the best options across independent artists and eco-conscious brands.",
+    };
+  }
+  if (categorySlug === "mugs") {
+    return {
+      h1: "Support Rescue Dogs — Beagle Mugs & Gifts",
+      title: "Support Rescue Dogs — Beagle Mugs | Easy Street Markets",
+      editorialText: "In light of recent news like the Ridglan Farms beagle rescue, supporting rescue dogs is more important than ever. Our curated collection of Beagle mugs and gifts helps you show your support for animal welfare. Whether you're a proud 'Beagle Mom' or a dedicated rescue advocate, find the perfect design to start your morning.",
+    };
+  }
+  return null;
+}
+

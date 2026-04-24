@@ -19,7 +19,7 @@ export default function Footer() {
           <ul className="space-y-2 text-sm">
             {categories.map(([slug, label]) => (
               <li key={slug}>
-                <Link href={`/${slug}/`} className="hover:text-white">
+                <Link href={`/${slug}`} className="hover:text-white">
                   {label}
                 </Link>
               </li>
@@ -29,16 +29,16 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold text-white mb-3">Discover</h4>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/animals/" className="hover:text-white">Animal Directory</Link></li>
-            <li><Link href="/collections/" className="hover:text-white">Curated Collections</Link></li>
-            <li><Link href="/blog/" className="hover:text-white">Blog</Link></li>
+            <li><Link href="/animals" className="hover:text-white">Animal Directory</Link></li>
+            <li><Link href="/collections" className="hover:text-white">Curated Collections</Link></li>
+            <li><Link href="/blog" className="hover:text-white">Blog</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="font-semibold text-white mb-3">About</h4>
           <ul className="space-y-2 text-sm">
-            <li><Link href="/about/" className="hover:text-white">About Us</Link></li>
-            <li><Link href="/about/tim/" className="hover:text-white">Author</Link></li>
+            <li><Link href="/about" className="hover:text-white">About Us</Link></li>
+            <li><Link href="/about/tim" className="hover:text-white">Author</Link></li>
           </ul>
         </div>
       </div>

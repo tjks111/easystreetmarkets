@@ -1,0 +1,17 @@
+# Tasks
+- [x] Task 1: Generate 300 Earth Day POD products
+  - [x] SubTask 1.1: Identify the top 10 performing animals/queries.
+  - [x] SubTask 1.2: Rewire `headless_pod.py` to support programmatic background removal (e.g. downloading the DALL-E image and using a local script/library like `rembg` or an API).
+  - [x] SubTask 1.3: Generate 300 Earth Day products (30 per animal) and push them to Printful and Stripe.
+  - [x] SubTask 1.4: Insert the 300 new products into the Supabase database.
+- [x] Task 2: Clean up old mock products from the database
+  - [x] SubTask 2.1: Use the Supabase MCP to execute a SQL DELETE command removing any products where `slug` LIKE '%mock%' AND `source`='printful-own'.
+- [x] Task 3: Rewrite editorial copy in `src/lib/guide-content.ts`
+  - [x] SubTask 3.1: Update `intro` to remove references to "affiliate-capable stores" and specific marketplace names.
+  - [x] SubTask 3.2: Update `whyMatters` to remove references to platforms like Etsy, Redbubble, Amazon, Walmart, and Printful, focusing purely on the varying quality of merchandise in the market.
+  - [x] SubTask 3.3: Update `faqs` to soften or remove the explicit explanations about affiliate commissions and specific platform sourcing.
+- [x] Task 4: Prioritize Easy Street Markets products in UI sorting
+  - [x] SubTask 4.1: Update the sorting logic (e.g., in `src/app/[category]/[animal]/page.tsx`, `src/lib/supabase-client.ts`, or the component displaying the grid) to sort `is_own_product: true` (or `source: 'printful-own'`) products to the very top.
+- [x] Task 5: Sync counts and rebuild static pages
+  - [x] SubTask 5.1: Execute `python update_counts.py` to synchronize the categories and animals tables with the updated product table.
+  - [x] SubTask 5.2: Execute `.\deploy.ps1` to rebuild the Next.js static pages with the new content and counts.

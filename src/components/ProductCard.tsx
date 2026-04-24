@@ -1,5 +1,6 @@
 import type { Product } from "@/lib/types";
 import { formatPrice, SOURCE_LABELS, capitalize } from "@/lib/utils";
+import PodCardInteractive from "./PodCardInteractive";
 
 // Map animal slug to emoji for branded fallback
 const ANIMAL_EMOJI: Record<string, string> = {
@@ -68,13 +69,8 @@ export default function ProductCard({ product }: { product: Product }) {
   const animalEmoji = product.animal ? ANIMAL_EMOJI[product.animal] : null;
   const categoryEmoji = CATEGORY_EMOJI[product.category] || "🌿";
 
-  return (
-    <a
-      href={`/go/${product.slug}/`}
-      target="_blank"
-      rel="sponsored nofollow noopener"
-      className="group flex flex-col bg-white rounded-lg border border-foreground/5 hover:border-forest/40 hover:shadow-lg transition-all overflow-hidden"
-    >
+  const cardContent = (
+    <div className="h-full flex flex-col">
       <div className="aspect-square bg-gradient-to-br from-sand to-cream flex items-center justify-center overflow-hidden relative">
         {hasRealImage ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -111,7 +107,35 @@ export default function ProductCard({ product }: { product: Product }) {
             </span>
           )}
         </div>
+        {product.product_type === 'pod' && product.stripe_price_id && product.price_min && (
+          <div className="w-full mt-2 bg-forest text-cream py-2 rounded font-medium group-hover:bg-forest/90 transition-colors z-10 relative text-center flex items-center justify-center pointer-events-none">
+            Select Options
+          </div>
+        )}
       </div>
+    </div>
+  );
+
+  const className = "group flex flex-col bg-white rounded-lg border border-foreground/5 hover:border-forest/40 hover:shadow-lg transition-all overflow-hidden h-full";
+
+  if (product.product_type === 'pod') {
+    return (
+      <div className={className}>
+        <PodCardInteractive product={product} className="w-full h-full text-left cursor-pointer focus:outline-none">
+          {cardContent}
+        </PodCardInteractive>
+      </div>
+    );
+  }
+
+  return (
+    <a
+      href={`/go/${product.slug}`}
+      target="_blank"
+      rel="sponsored nofollow noopener"
+      className={className}
+    >
+      {cardContent}
     </a>
   );
 }

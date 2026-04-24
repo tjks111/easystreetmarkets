@@ -1,0 +1,9 @@
+- [x] `variants` JSONB column exists on the `products` table in Supabase.
+- [x] `src/components/PodProductModal.tsx` exists and displays a Lemon Squeezy-style pop-out with Size/Color selectors.
+- [x] Modal dynamically updates the main product image when a different color is selected.
+- [x] `src/components/PodCardInteractive.tsx` exists and opens the modal when clicked.
+- [x] `src/components/ProductCard.tsx` no longer uses `<a>` tags for POD products, but wraps them in `PodCardInteractive`.
+- [x] Selecting a Size and Color and clicking "Add to Cart" inside the modal successfully adds the variant to the shopping cart.
+- [x] `scripts/migrate_mockups_to_supabase.py` generates, downloads, renames, and uploads multi-color mockups to Supabase for existing products.
+- [x] `headless_pod.py` handles multi-color mockup generation and Supabase uploading before inserting into the database.
+- [x] `src/app/image-sitemap.xml/route.ts` generates a valid XML Image Sitemap with `<image:image>` tags mapping to Supabase URLs for all color variants.

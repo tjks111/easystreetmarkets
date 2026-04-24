@@ -29,7 +29,7 @@ export async function generateMetadata({
   return {
     title: `${an.common_name} ${label} — Compared & Reviewed`,
     description: `Compare ${an.common_name.toLowerCase()} ${label.toLowerCase()} from Etsy, Amazon, Walmart, Zazzle, Redbubble, and more. Prices, sellers, and buying guide.`,
-    alternates: { canonical: `${SITE_URL}/${category}/${animal}/` },
+    alternates: { canonical: `${SITE_URL}/${category}/${animal}` },
   };
 }
 
@@ -140,7 +140,7 @@ export default async function IntersectionPage({
             {otherCats.map((c) => (
               <Link
                 key={c}
-                href={`/${c}/${animal}/`}
+                href={`/${c}/${animal}`}
                 className="px-4 py-2 rounded-full bg-sand hover:bg-forest hover:text-white transition-colors text-sm"
               >
                 {CATEGORY_LABELS[c] || c}
@@ -158,7 +158,7 @@ export default async function IntersectionPage({
             {relatedAnimals.map((a) => (
               <Link
                 key={a}
-                href={`/${category}/${a}/`}
+                href={`/${category}/${a}`}
                 className="px-4 py-2 rounded-full bg-sand hover:bg-forest hover:text-white transition-colors text-sm capitalize"
               >
                 {a.replace(/-/g, " ")}
@@ -171,7 +171,7 @@ export default async function IntersectionPage({
       {/* Learn more about the animal */}
       <section className="max-w-3xl mb-10">
         <Link
-          href={`/animals/${animal}/`}
+          href={`/animals/${animal}`}
           className="inline-block text-forest font-medium hover:underline"
         >
           Read more about the {an.common_name} →

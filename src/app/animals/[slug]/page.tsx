@@ -27,7 +27,7 @@ export async function generateMetadata({
   return {
     title: `${animal.common_name} — Wildlife Merchandise & Conservation`,
     description: `${animal.common_name} (${animal.scientific_name}) — educational content, conservation status (${animal.conservation_status}), and curated merchandise featuring this species.`,
-    alternates: { canonical: `${SITE_URL}/animals/${slug}/` },
+    alternates: { canonical: `${SITE_URL}/animals/${slug}` },
   };
 }
 
@@ -166,7 +166,7 @@ export default async function AnimalDetailPage({
               {editorial.categoryBreakdown.map((c) => (
                 <Link
                   key={c.category}
-                  href={`/${c.category}/${slug}/`}
+                  href={`/${c.category}/${slug}`}
                   className="px-4 py-2 rounded-full bg-sand hover:bg-forest hover:text-white transition-colors text-sm"
                 >
                   {c.label} ({c.count})
@@ -189,7 +189,7 @@ export default async function AnimalDetailPage({
                     {CATEGORY_LABELS[cat] || cat}
                   </h3>
                   <Link
-                    href={`/${cat}/${slug}/`}
+                    href={`/${cat}/${slug}`}
                     className="text-sm text-forest hover:underline"
                   >
                     See all →

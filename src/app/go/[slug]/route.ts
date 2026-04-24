@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProduct } from "@/lib/data";
+import { GA_ID } from "@/components/Analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -10,27 +11,24 @@ const EBAY_ROTATION_ID = "711-53200-19255-0"; // eBay US Partner Network rotatio
 
 // Inject affiliate tracking parameters for networks that use URL-based tracking.
 // Add new store handlers here as new affiliate programs are approved.
-function withAffiliateParams(rawUrl: string, productSlug?: string): string {
+function withAffiliateParams(rawUrl: string, productSlug?: string): { url: string, store: string } {
   try {
     const url = new URL(rawUrl);
     const host = url.hostname.toLowerCase();
 
-    // Amazon Associates — any amazon.com URL gets the tag parameter
+    // Amazon Associates
     if (host === "amazon.com" || host.endsWith(".amazon.com")) {
       url.searchParams.set("tag", AMAZON_ASSOCIATES_TAG);
-      return url.toString();
+      return { url: url.toString(), store: "amazon" };
     }
 
-    // Zazzle Ambassador — cross-promotion mode (we don't own the shops we
-    // link to), 15% commission. Works on zazzle.com + all international
-    // domains (zazzle.co.uk, zazzle.ca, zazzle.com.au, zazzle.de, etc.).
+    // Zazzle Ambassador
     if (host === "zazzle.com" || /\.zazzle\.[a-z.]+$/.test(host) || /\bzazzle\.[a-z.]+$/.test(host)) {
       url.searchParams.set("rf", ZAZZLE_AMBASSADOR_ID);
-      return url.toString();
+      return { url: url.toString(), store: "zazzle" };
     }
 
-    // eBay Partner Network — campaign-based tracking with per-product customid
-    // for attribution analytics. Works on ebay.com + international domains.
+    // eBay Partner Network
     if (host === "ebay.com" || /\.ebay\.[a-z.]+$/.test(host) || /\bebay\.[a-z.]+$/.test(host)) {
       url.searchParams.set("mkcid", "1");
       url.searchParams.set("mkrid", EBAY_ROTATION_ID);
@@ -39,12 +37,55 @@ function withAffiliateParams(rawUrl: string, productSlug?: string): string {
       url.searchParams.set("toolid", "10001");
       url.searchParams.set("mkevt", "1");
       if (productSlug) url.searchParams.set("customid", productSlug);
-      return url.toString();
+      return { url: url.toString(), store: "ebay" };
+    }
+    
+    // Etsy or others
+    if (host.includes("etsy.com")) return { url: rawUrl, store: "etsy" };
+    if (host.includes("redbubble.com")) return { url: rawUrl, store: "redbubble" };
+
+    return { url: rawUrl, store: "other" };
+  } catch {
+    return { url: rawUrl, store: "unknown" };
+  }
+}
+
+// Fire-and-forget server-side GA4 tracking via Measurement Protocol
+async function trackOutboundClick(request: NextRequest, slug: string, finalUrl: string, store: string) {
+  try {
+    // We need a GA4 API Secret to use Measurement Protocol securely.
+    // If not configured, we'll gracefully skip tracking to not break redirects.
+    const apiSecret = process.env.GA4_MEASUREMENT_SECRET;
+    if (!apiSecret) return;
+
+    // Try to get client ID from cookies (_ga), fallback to IP/User-Agent hash or random UUID
+    let clientId = request.cookies.get('_ga')?.value;
+    if (clientId && clientId.startsWith('GA1.1.')) {
+      clientId = clientId.split('GA1.1.')[1];
+    } else if (clientId && clientId.startsWith('GA1.2.')) {
+      clientId = clientId.split('GA1.2.')[1];
+    } else {
+      clientId = crypto.randomUUID();
     }
 
-    return rawUrl;
-  } catch {
-    return rawUrl;
+    await fetch(`https://www.google-analytics.com/mp/collect?measurement_id=${GA_ID}&api_secret=${apiSecret}`, {
+      method: "POST",
+      body: JSON.stringify({
+        client_id: clientId,
+        events: [{
+          name: "outbound_click",
+          params: {
+            link_url: finalUrl,
+            outbound_store: store,
+            product_slug: slug,
+            page_location: request.url
+          }
+        }]
+      })
+    });
+  } catch (e) {
+    // Ignore tracking errors to ensure redirect always works
+    console.error("GA4 Server Tracking Error:", e);
   }
 }
 
@@ -59,7 +100,11 @@ export async function GET(
     return NextResponse.redirect(new URL("/", _request.url), 302);
   }
 
-  const finalUrl = withAffiliateParams(product.affiliate_url, slug);
+  const { url: finalUrl, store } = withAffiliateParams(product.affiliate_url, slug);
+
+  // Track the click server-side before redirecting
+  // Await it so Vercel/Cloudflare doesn't kill the background promise
+  await trackOutboundClick(_request, slug, finalUrl, store);
 
   return NextResponse.redirect(finalUrl, {
     status: 302,

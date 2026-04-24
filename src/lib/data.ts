@@ -45,7 +45,7 @@ export async function getAnimal(slug: string): Promise<Animal | null> {
 // source_url, affiliate_url) that aren't used by list/grid/editorial rendering.
 // Keeping the payload small matters on Cloudflare Workers (128MB memory cap).
 const PRODUCT_LIST_FIELDS =
-  "id,slug,name,category,subcategory,animal,image_url,price_min,price_max,source,is_featured,rating,review_count,in_stock,created_at,updated_at";
+  "id,slug,name,category,subcategory,animal,image_url,price_min,price_max,source,is_featured,rating,review_count,in_stock,product_type,is_own_product,stripe_price_id,created_at,updated_at";
 
 // Products
 export async function getProducts(filters?: {
@@ -55,7 +55,7 @@ export async function getProducts(filters?: {
   limit?: number;
   page?: number;
 }): Promise<Product[]> {
-  const PRIORITY_SOURCES = ["amazon", "ebay"];
+  const PRIORITY_SOURCES = ["printful-own", "amazon", "ebay"];
   const limit = filters?.limit ?? 100;
   const page = filters?.page ?? 1;
   const offset = (page > 0 ? page - 1 : 0) * limit;
@@ -72,6 +72,7 @@ export async function getProducts(filters?: {
     if (filters?.featured) q = q.eq("is_featured", true);
 
     return q
+      .order("is_own_product", { ascending: false, nullsFirst: false })
       .order("is_featured", { ascending: false, nullsFirst: false })
       .order("rating", { ascending: false, nullsFirst: false });
   };

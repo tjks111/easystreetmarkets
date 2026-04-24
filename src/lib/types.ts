@@ -1,3 +1,9 @@
+export interface ProductVariant {
+  color: string;
+  image_url: string;
+  variant_id?: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -15,6 +21,10 @@ export interface Product {
   is_own_product: boolean;
   is_featured: boolean;
   tags: string[] | null;
+  product_type?: string;
+  stripe_price_id?: string;
+  printful_variant_id?: string;
+  variants?: ProductVariant[] | null;
   rating: number | null;
   review_count: number;
   in_stock: boolean;
