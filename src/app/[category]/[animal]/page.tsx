@@ -27,7 +27,7 @@ export async function generateMetadata({
   if (!cat || !an) return {};
   const label = CATEGORY_LABELS[category] || cat.name;
   return {
-    title: `${an.common_name} ${label} — Compared & Reviewed`,
+    title: `Best ${an.common_name} ${label} (Top Picks & Gifts) | Easy Street Markets`,
     description: `Compare ${an.common_name.toLowerCase()} ${label.toLowerCase()} from Etsy, Amazon, Walmart, Zazzle, Redbubble, and more. Prices, sellers, and buying guide.`,
     alternates: { canonical: `${SITE_URL}/${category}/${animal}` },
   };
@@ -79,7 +79,7 @@ export default async function IntersectionPage({
 
       <header className="mb-8">
         <h1 className="text-4xl font-bold mb-3">
-          {an.common_name} {label} — {products.length} Products Compared
+          The Best {an.common_name} {label} — {products.length} Top Picks Compared
         </h1>
         {an.scientific_name && (
           <p className="text-sm italic text-foreground/60 mb-2">{an.scientific_name}</p>

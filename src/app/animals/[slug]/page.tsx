@@ -25,7 +25,7 @@ export async function generateMetadata({
   const animal = await getAnimal(slug);
   if (!animal) return {};
   return {
-    title: `${animal.common_name} — Wildlife Merchandise & Conservation`,
+    title: `The Best ${animal.common_name} Merchandise & Unique Gift Ideas | Easy Street Markets`,
     description: `${animal.common_name} (${animal.scientific_name}) — educational content, conservation status (${animal.conservation_status}), and curated merchandise featuring this species.`,
     alternates: { canonical: `${SITE_URL}/animals/${slug}` },
   };
@@ -71,7 +71,7 @@ export default async function AnimalDetailPage({
 
       <article>
         <header className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">{animal.common_name}</h1>
+          <h1 className="text-4xl font-bold mb-2">Best {animal.common_name} Merchandise & Gifts</h1>
           {animal.scientific_name && (
             <p className="text-lg italic text-foreground/60 mb-4">{animal.scientific_name}</p>
           )}

@@ -45,7 +45,7 @@ export async function getAnimal(slug: string): Promise<Animal | null> {
 // source_url, affiliate_url) that aren't used by list/grid/editorial rendering.
 // Keeping the payload small matters on Cloudflare Workers (128MB memory cap).
 const PRODUCT_LIST_FIELDS =
-  "id,slug,name,category,subcategory,animal,image_url,price_min,price_max,source,is_featured,rating,review_count,in_stock,product_type,is_own_product,stripe_price_id,created_at,updated_at";
+  "id,slug,name,category,subcategory,animal,image_url,price_min,price_max,source,is_featured,rating,review_count,in_stock,product_type,is_own_product,stripe_price_id,variants,created_at,updated_at";
 
 // Products
 export async function getProducts(filters?: {

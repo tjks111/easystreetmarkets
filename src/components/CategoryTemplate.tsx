@@ -43,7 +43,7 @@ export default async function CategoryTemplate({
 
   const label = CATEGORY_LABELS[category] || cat.name;
   const overrides = getCategoryOverrides(category);
-  const displayH1 = overrides?.h1 || `Best Wildlife ${label} — Curated & Compared`;
+  const displayH1 = overrides?.h1 || `The Best Wildlife ${label} — Top Picks & Gift Ideas`;
   const displayDescription = overrides?.editorialText || cat.description;
   const faqs = generateCategoryFAQs(cat, products, animalsWithProducts);
 

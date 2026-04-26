@@ -26,7 +26,7 @@ export async function generateMetadata({
   const canonicalUrl = `${SITE_URL}/${category}`;
 
   return {
-    title: overrides?.title || `Best Wildlife ${label} — Curated & Compared`,
+    title: overrides?.title || `Best Wildlife ${label} (Top Picks & Gifts) | Easy Street Markets`,
     description: overrides?.editorialText || cat.meta_description ||
       `Compare the best wildlife ${label.toLowerCase()} from Amazon, Redbubble, Etsy, and independent brands.`,
     alternates: { canonical: canonicalUrl },

@@ -65,7 +65,7 @@ export default function PodProductModal({ product, isOpen, onClose }: PodProduct
         price: Math.round(product.price_min * 100),
         currency: 'USD',
         image: displayImage || undefined,
-        sku: product.printful_variant_id,
+        sku: currentVariant?.variant_id || product.printful_variant_id,
         product_data: {
           size: selectedSize,
           color: selectedColor

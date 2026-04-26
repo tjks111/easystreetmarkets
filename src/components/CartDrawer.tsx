@@ -7,6 +7,7 @@ import { useState } from 'react';
 export default function CartDrawer() {
   const { cartDetails, cartCount, totalPrice, shouldDisplayCart, handleCloseCart, removeItem } = useShoppingCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   if (!shouldDisplayCart) return null;
 
@@ -14,6 +15,7 @@ export default function CartDrawer() {
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
+    setCheckoutError(null);
     try {
       const response = await fetch('/api/checkout', {
         method: 'POST',
@@ -21,12 +23,18 @@ export default function CartDrawer() {
         body: JSON.stringify({ cartDetails }),
       });
       
-      const { url } = await response.json();
-      if (url) {
-        window.location.href = url;
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
       }
-    } catch (error) {
+      
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (error: any) {
       console.error('Checkout error:', error);
+      setCheckoutError(error.message || 'An unexpected error occurred.');
     } finally {
       setIsCheckingOut(false);
     }
@@ -92,6 +100,11 @@ export default function CartDrawer() {
               <span>Total</span>
               <span className="text-forest">{formatPrice((totalPrice || 0) / 100, (totalPrice || 0) / 100)}</span>
             </div>
+            {checkoutError && (
+              <div className="mb-4 p-3 bg-red-50 text-red-600 rounded-md text-sm border border-red-200">
+                {checkoutError}
+              </div>
+            )}
             <button
               onClick={handleCheckout}
               disabled={isCheckingOut}
